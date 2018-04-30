@@ -179,12 +179,3 @@ def removeTask(bot, update, args):
 
 removeTask_handler = CommandHandler('removeTask', removeTask, pass_args=True)
 dispatcher.add_handler(removeTask_handler)
-
-
-# this will handle unknown commands
-def unknown(bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="Invalid Command.")
-
-
-unknown_handler = MessageHandler(Filters.command, unknown)
-dispatcher.add_handler(unknown_handler)
