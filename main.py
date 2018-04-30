@@ -146,7 +146,6 @@ dispatcher.add_handler(removeAllTasks_handler)
 def removeTask(bot, update, args):
     # convert args from list to string
     args = " ".join(args)
-    print(args)
     connection = getConnection()
 
     # we need this so we can tell the user if the task they want to delete even exists
@@ -166,7 +165,6 @@ def removeTask(bot, update, args):
 
         # if the value is found, delete it...
         if args in found:
-            print("arg found")
             cursor.execute(sql_delete, (args))
             bot.send_message(chat_id=update.message.chat_id, text="Task successfully removed")
             connection.commit()
