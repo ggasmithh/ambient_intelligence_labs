@@ -140,3 +140,53 @@ def removeAllTasks(bot, update, args):
 
 removeAllTasks_handler = CommandHandler('removeAllTasks', removeAllTasks, pass_args=True)
 dispatcher.add_handler(removeAllTasks_handler)
+
+
+# function to remove a specific task
+def removeTask(bot, update, args):
+    # convert args from list to string
+    args = " ".join(args)
+    print(args)
+    connection = getConnection()
+
+    # we need this so we can tell the user if the task they want to delete even exists
+    sql_find = "SELECT todo FROM task"
+
+    # this will actually delete the task
+    sql_delete = "DELETE FROM task WHERE todo = %s;"
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(sql_find)
+
+        # create list of found tasks
+        found = []
+        for row in cursor:
+            found.append(row["todo"])
+
+        # if the value is found, delete it...
+        if args in found:
+            print("arg found")
+            cursor.execute(sql_delete, (args))
+            bot.send_message(chat_id=update.message.chat_id, text="Task successfully removed")
+            connection.commit()
+
+        # ...if not, tell the user that it wasn't found
+        else:
+            bot.send_message(chat_id=update.message.chat_id, text="Specified task not found")
+
+    finally:
+        connection.close()
+
+
+removeTask_handler = CommandHandler('removeTask', removeTask, pass_args=True)
+dispatcher.add_handler(removeTask_handler)
+
+
+# this will handle unknown commands
+def unknown(bot, update):
+    bot.send_message(chat_id=update.message.chat_id, text="Invalid Command.")
+
+
+unknown_handler = MessageHandler(Filters.command, unknown)
+dispatcher.add_handler(unknown_handler)
