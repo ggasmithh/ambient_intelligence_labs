@@ -71,3 +71,29 @@ def showTasks(bot, update):
 
 showTasks_handler = CommandHandler('showTasks', showTasks)
 dispatcher.add_handler(showTasks_handler)
+
+
+# function to insert a new task
+def newTask(bot, update, args):
+    # convert args from list to string
+    args = " ".join(args)
+
+    connection = getConnection()
+
+    sql = "INSERT INTO task (todo) VALUES (%s);"
+
+    try:
+
+        cursor = connection.cursor()
+        cursor.execute(sql, (args))
+
+        connection.commit()
+
+        bot.send_message(chat_id=update.message.chat_id, text="New Task Added.")
+
+    finally:
+        connection.close()
+
+
+newTask_handler = CommandHandler('newTask', newTask, pass_args=True)
+dispatcher.add_handler(newTask_handler)
