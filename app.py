@@ -17,10 +17,10 @@ def insert_task():
     if request.headers['Content-Type'] == 'application/json':
         
         if "urgent" in request.json:
-            userdb.insert_task(request.json["task"], request.json["urgent"])
+            userdb.insert_task(request.json["task_desc"], request.json["urgent"])
 
         else:
-            userdb.insert_task(request.json["task"], 0)
+            userdb.insert_task(request.json["task_desc"], 0)
 
         
         response = jsonify(
@@ -46,7 +46,34 @@ def delete_task(tid):
         response.status_code = 404
     
     return response
-    
+
+
+@app.route('/tasks/<tid>', methods=['PUT'])
+def update_task(tid):
+    if request.headers['Content-Type'] == 'application/json':
+
+        update_params = [None, -1]
+
+        if "task_desc" in request.json:
+            update_params[0] = request.json["task_desc"]
+                
+        if "urgent" in request.json:
+            #this is ugly and hacky as sin but it works
+            update_params[1] = int(str(request.json["urgent"]))
+
+        userdb.update_task(tid, *update_params)
+
+        response = jsonify(
+            { 'message': "PUT Successful"})
+
+    else:
+        response = jsonify(
+                    { 'message': "Invalid Request"})
+
+        response.status_code = 404
+
+    return response
+
 if __name__ == '__main__':
     app.run()
 
