@@ -4,6 +4,7 @@ import userdb
 app = Flask(__name__)
 
 @app.route('/tasks/', methods=['GET'])
+@app.route('/tasks', methods=['GET'])
 def tasks():
     return jsonify(userdb.show_tasks())
 
@@ -11,6 +12,34 @@ def tasks():
 def task(tid):
     return jsonify(userdb.show_tasks(tid))
 
+@app.route('/tasks/', methods=['POST'])
+def insert_task():
+    if request.headers['Content-Type'] == 'application/json':
+        userdb.insert_task(request.json["task"])
+        response = jsonify(
+                { 'message': "POST Successful"})
+
+    else:
+        response = jsonify(
+                { 'message': "Invalid Request"})
+        response.status_code = 404
+
+    return response
+    
+
+@app.route('/tasks/<tid>', methods=['DELETE'])
+def delete_task(tid):
+    if userdb.delete_task(tid):
+        response = jsonify(
+                { 'message': "DELETE Successful"})
+    
+    else:
+        response = jsonify(
+                { 'message': "Invalid Request"})
+        response.status_code = 404
+    
+    return response
+    
 if __name__ == '__main__':
     app.run()
 

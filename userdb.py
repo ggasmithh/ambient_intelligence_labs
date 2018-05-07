@@ -73,6 +73,11 @@ def delete_task(tid):
         cursor.execute(sql_delete, tid)
         connection.commit()
 
+    #return False on failure
+    except:
+        return False    
+        
+    #close connection and return True on successful delete
     finally:
         connection.close()
-
+        return True
