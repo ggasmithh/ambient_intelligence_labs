@@ -31,13 +31,7 @@ def show_tasks(tid = -1):
             sql = "SELECT * FROM task WHERE id = %s;"
             cursor.execute(sql, tid)
 
-        tasks = []
-
-        for row in cursor:
-            tasks.append((row["id"], row["todo"]))
-
-        if not tasks:
-            tasks = ["No tasks found"]
+        tasks = cursor.fetchall()
 
     finally:
         connection.close()
@@ -45,16 +39,16 @@ def show_tasks(tid = -1):
 
 
 # function to insert a new task
-def insert_task(task_desc):
+def insert_task(task_desc, urgent):
 
     #open the connection to the database
     connection = get_connection()
 
-    sql = "INSERT INTO task (todo) VALUES (%s);"
+    sql = "INSERT INTO task (todo, urgent) VALUES (%s, %s);"
 
     try:
         cursor = connection.cursor()
-        cursor.execute(sql, task_desc)
+        cursor.execute(sql, (task_desc, urgent))
         connection.commit()
 
     finally:

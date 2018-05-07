@@ -15,7 +15,14 @@ def task(tid):
 @app.route('/tasks/', methods=['POST'])
 def insert_task():
     if request.headers['Content-Type'] == 'application/json':
-        userdb.insert_task(request.json["task"])
+        
+        if "urgent" in request.json:
+            userdb.insert_task(request.json["task"], request.json["urgent"])
+
+        else:
+            userdb.insert_task(request.json["task"], 0)
+
+        
         response = jsonify(
                 { 'message': "POST Successful"})
 
